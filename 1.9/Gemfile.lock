@@ -36,14 +36,6 @@ GEM
       rake
     fluent-config-regexp-type (1.0.0)
       fluentd (> 1.0.0, < 2)
-    fluent-mixin-config-placeholders (0.4.0)
-      fluentd
-      uuidtools (>= 2.1.5)
-    fluent-mixin-plaintextformatter (0.2.6)
-      fluentd
-      ltsv
-    fluent-mixin-rewrite-tag-name (0.1.0)
-      fluentd
     fluent-plugin-cloudwatch-logs (0.8.0)
       aws-sdk-cloudwatchlogs (~> 1.0)
       fluentd (>= 1.8.0)
@@ -64,12 +56,6 @@ GEM
       fluentd (>= 0.14.0, < 2)
       kubeclient (< 5)
       lru_redux
-    fluent-plugin-kubernetes_remote_syslog (0.3.6)
-      fluent-mixin-config-placeholders
-      fluent-mixin-plaintextformatter
-      fluent-mixin-rewrite-tag-name
-      fluentd
-      remote_syslog_sender (~> 1.2.1)
     fluent-plugin-multi-format-parser (1.0.0)
       fluentd (>= 0.14.0, < 2)
     fluent-plugin-prometheus (1.6.1)
@@ -77,6 +63,9 @@ GEM
       prometheus-client (< 0.10)
     fluent-plugin-record-modifier (2.0.1)
       fluentd (>= 1.0, < 2)
+    fluent-plugin-remote_syslog (1.0.0)
+      fluentd
+      remote_syslog_sender (>= 1.1.1)
     fluent-plugin-rewrite-tag-filter (2.2.0)
       fluent-config-regexp-type
       fluentd (>= 0.14.2, < 2)
@@ -111,7 +100,6 @@ GEM
       recursive-open-struct (~> 1.0, >= 1.0.4)
       rest-client (~> 2.0)
     lru_redux (1.1.0)
-    ltsv (0.1.2)
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
@@ -147,7 +135,6 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
-    uuidtools (2.2.0)
     yajl-ruby (1.4.1)
 
 PLATFORMS
@@ -164,10 +151,10 @@ DEPENDENCIES
   fluent-plugin-grok-parser (~> 2.6.0)
   fluent-plugin-json-in-json-2 (>= 1.0.2)
   fluent-plugin-kubernetes_metadata_filter (~> 2.3.0)
-  fluent-plugin-kubernetes_remote_syslog (~> 0.3.6)
   fluent-plugin-multi-format-parser (~> 1.0.0)
   fluent-plugin-prometheus (~> 1.6.1)
   fluent-plugin-record-modifier (~> 2.0.0)
+  fluent-plugin-remote_syslog (~> 1.0.0)
   fluent-plugin-rewrite-tag-filter (~> 2.2.0)
   fluent-plugin-systemd (~> 1.0.1)
   fluentd (= 1.9.3)
