@@ -26,6 +26,3 @@ gem "fluent-plugin-elasticsearch", "~> 4.0.3"
 
 # remote_syslog
 gem "fluent-plugin-remote_syslog", "~> 1.0.0"
-
-# stackdriver
-gem "fluent-plugin-google-cloud", "~> 0.4.2"
