@@ -15,6 +15,7 @@ gem "fluent-plugin-detect-exceptions", "~> 0.0.12"
 gem "fluent-plugin-rewrite-tag-filter", "~> 2.2.0"
 gem "fluent-plugin-kubernetes_metadata_filter", "~> 2.3.0"
 gem "fluent-plugin-systemd", "~> 1.0.1"
+gem "fluent-plugin-parser-cri", "~> 0.1.1"
 
 # cloudwatch
 gem "aws-sdk-cloudwatchlogs", "~> 1.0"
