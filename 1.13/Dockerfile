@@ -1,4 +1,6 @@
-FROM fluent/fluentd:v1.13.3-debian-1.0
+# append a dash to the end, e.g ARCH=arm64-
+ARG ARCH=
+FROM fluent/fluentd:v1.13.3-debian-${ARCH}1.0
 
 LABEL maintainer="Eduardo Silva <eduardo@treasure-data.com>"
 USER root
