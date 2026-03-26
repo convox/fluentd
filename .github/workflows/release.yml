@@ -86,6 +86,6 @@ jobs:
       - name: create multi-arch manifest
         run: |
           docker buildx imagetools create \
-            -t convox/fluentd:${{ env.TAG }} \
+            -t convox/fluentd:${{ env.TAG }}-all \
             convox/fluentd:${{ env.TAG }}-amd64 \
             convox/fluentd:${{ env.TAG }}-arm64
