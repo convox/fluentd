@@ -13,7 +13,12 @@ ENV FLUENTD_DISABLE_BUNDLER_INJECTION 1
 
 COPY Gemfile* /fluentd/
 
-RUN buildDeps="sudo make gcc g++ libc-dev libffi-dev" \
+RUN sed -i -e 's/deb.debian.org/archive.debian.org/g' \
+           -e 's/security.debian.org/archive.debian.org/g' \
+           -e '/buster-updates/d' \
+           /etc/apt/sources.list \
+   && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until \
+   && buildDeps="sudo make gcc g++ libc-dev libffi-dev" \
    && apt-get update \
    && apt-get upgrade -y \
    && apt-get install \
