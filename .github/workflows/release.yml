@@ -1,0 +1,91 @@
+name: release
+
+on:
+  push:
+    tags: ["*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to publish (e.g. 1.13)"
+        required: true
+        default: "1.13"
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          else
+            echo "TAG=$(echo ${{ github.ref }} | awk -F/ '{print $3}')" >> $GITHUB_ENV
+          fi
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: login
+        run: docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: build-amd64
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            --build-arg ARCH= \
+            -t convox/fluentd:${{ env.TAG }}-amd64 \
+            --push \
+            ./1.13
+
+  build-arm64:
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          else
+            echo "TAG=$(echo ${{ github.ref }} | awk -F/ '{print $3}')" >> $GITHUB_ENV
+          fi
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: login
+        run: docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: build-arm64
+        run: |
+          docker buildx build \
+            --platform linux/arm64 \
+            --build-arg ARCH=arm64- \
+            -t convox/fluentd:${{ env.TAG }}-arm64 \
+            --push \
+            ./1.13
+
+  create-manifest:
+    needs: [build-amd64, build-arm64]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          else
+            echo "TAG=$(echo ${{ github.ref }} | awk -F/ '{print $3}')" >> $GITHUB_ENV
+          fi
+      - name: login
+        run: docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: create multi-arch manifest
+        run: |
+          docker buildx imagetools create \
+            -t convox/fluentd:${{ env.TAG }}-all \
+            convox/fluentd:${{ env.TAG }}-amd64 \
+            convox/fluentd:${{ env.TAG }}-arm64
