@@ -16,6 +16,7 @@ module Fluent
       config_param :hostname_key, :string, :default => nil
       config_param :payload_key, :string, :default => "message"
       config_param :tag_key, :string, :default => nil
+      config_param :tls_verify, :bool, :default => true
 
       RETRY_INTERVAL = 60
 
@@ -82,12 +83,20 @@ module Fluent
         when "tcp"
           RemoteSyslogSender::TcpSender.new(@url.host, @url.port, tcp_options)
         when "tcp+tls"
-          RemoteSyslogSender::TcpSender.new(@url.host, @url.port, tcp_options.merge(tls: true, verify_mode: OpenSSL::SSL::VERIFY_NONE))
+          RemoteSyslogSender::TcpSender.new(@url.host, @url.port, tcp_options.merge(tls_options))
         when "udp"
           RemoteSyslogSender::UdpSender.new(@url.host, @url.port, whinyerrors: true, program: "convox")
         else
           raise Fluent::ConfigError.new("unknown scheme: #{@url.scheme}")
         end
+      end
+
+      def tls_options
+        return { tls: true, verify_mode: OpenSSL::SSL::VERIFY_NONE } unless @tls_verify
+
+        store = OpenSSL::X509::Store.new
+        store.set_default_paths
+        { tls: true, verify_mode: OpenSSL::SSL::VERIFY_PEER, cert_store: store }
       end
 
       def tcp_options
@@ -180,6 +189,7 @@ module RemoteSyslogSender
       @ssl_method = options[:ssl_method] || "TLSv1_2"
       @ca_file = options[:ca_file]
       @verify_mode = options[:verify_mode]
+      @cert_store = options[:cert_store]
       @timeout = options[:timeout] || 600
       @connect_timeout = options[:connect_timeout]
       @connect_retry_limit = options[:connect_retry_limit] || 3
@@ -233,6 +243,7 @@ module RemoteSyslogSender
             context.min_version = OpenSSL::SSL::TLS1_2_VERSION
             context.ca_file = @ca_file if @ca_file
             context.verify_mode = @verify_mode if @verify_mode
+            context.cert_store = @cert_store if @cert_store
 
             @socket = OpenSSL::SSL::SSLSocket.new(@tcp_socket, context)
             @socket.hostname = @remote_hostname unless @remote_hostname.match?(/\A[\d.]+\z|:/)
