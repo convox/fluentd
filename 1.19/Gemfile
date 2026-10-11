@@ -1,8 +1,8 @@
 source "https://rubygems.org"
 
 # Same pins as fluent/fluentd-kubernetes-daemonset v1.19.3-debian-cloudwatch-1.1
-# (docker-image/v1.19/debian-cloudwatch/Gemfile), plus syslog_protocol for
-# plugins/out_syslog.rb.
+# (docker-image/v1.19/debian-cloudwatch/Gemfile), plus the syslog and
+# elasticsearch sections.
 gem "fluentd", "1.19.3"
 
 gem "ffi"
@@ -27,3 +27,7 @@ gem "fluent-plugin-cloudwatch-logs", "~> 0.15.0"
 
 # syslog (plugins/out_syslog.rb)
 gem "syslog_protocol", "~> 0.9.2"
+
+# elasticsearch
+gem "elasticsearch", "~> 7.17.11"
+gem "fluent-plugin-elasticsearch", "~> 5.4.4"
