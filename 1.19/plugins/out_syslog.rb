@@ -19,6 +19,7 @@ module Fluent
       config_param :tls_verify, :bool, :default => true
 
       RETRY_INTERVAL = 60
+      TCP_PACKET_SIZE = 16384 + 1024
 
       def initialize
         super
@@ -100,7 +101,7 @@ module Fluent
       end
 
       def tcp_options
-        { whinyerrors: true, program: "convox", timeout: 5, timeout_exception: true, retry_limit: 1, connect_timeout: 5, connect_retry_limit: 0 }
+        { whinyerrors: true, program: "convox", timeout: 5, timeout_exception: true, retry_limit: 1, connect_timeout: 5, connect_retry_limit: 0, packet_size: TCP_PACKET_SIZE }
       end
     end
   end
