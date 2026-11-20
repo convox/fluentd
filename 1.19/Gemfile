@@ -1,9 +1,9 @@
 source "https://rubygems.org"
 
-# Same pins as fluent/fluentd-kubernetes-daemonset v1.19.3-debian-cloudwatch-1.1
+# Same pins as fluent/fluentd-kubernetes-daemonset v1.19.4-debian-cloudwatch-1.2
 # (docker-image/v1.19/debian-cloudwatch/Gemfile), plus the syslog and
 # elasticsearch sections.
-gem "fluentd", "1.19.3"
+gem "fluentd", "1.19.4"
 
 gem "ffi"
 gem "oj", "~> 3.17.3"
