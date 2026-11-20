@@ -1,6 +1,6 @@
 # append a dash to the end, e.g ARCH=arm64-
 ARG ARCH=
-FROM fluent/fluentd:v1.19.3-debian-${ARCH}2.4
+FROM fluent/fluentd:v1.19.4-debian-${ARCH}2.2
 
 USER root
 WORKDIR /home/fluent
@@ -23,7 +23,8 @@ RUN buildDeps="sudo make gcc g++ libc-dev libffi-dev libssl-dev" \
       $buildDeps '*-dev' \
  && rm -rf /var/lib/apt/lists/* \
  && gem sources --clear-all \
- && rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem
+ && rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem \
+ && find /usr/local/bundle -mindepth 1 -maxdepth 1 ! -name config -exec rm -rf {} +
 
 # Default configuration (convox racks replace /fluentd/etc with their ConfigMap)
 COPY ./conf/fluent.conf /fluentd/etc/
@@ -37,8 +38,7 @@ COPY entrypoint.sh /fluentd/entrypoint.sh
 
 ENV FLUENTD_OPT=""
 ENV FLUENTD_CONF="fluent.conf"
-# LD_PRELOAD=/usr/lib/libjemalloc.so.2 is inherited from fluent/fluentd (not
-# cleared as fluent/fluentd-kubernetes-daemonset does).
+# LD_PRELOAD (jemalloc) and MALLOC_CONF are inherited from fluent/fluentd.
 
 # Overwrite ENTRYPOINT to run fluentd as root for /var/log / /var/lib
 ENTRYPOINT ["tini", "--", "/fluentd/entrypoint.sh"]
